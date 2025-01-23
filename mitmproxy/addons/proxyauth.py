@@ -7,7 +7,6 @@ from abc import abstractmethod
 from collections.abc import MutableMapping
 from typing import Optional
 
-import ldap3
 import passlib.apache
 
 from mitmproxy import connection
@@ -52,8 +51,6 @@ class ProxyAuth:
                     self.validator = AcceptAll()
                 elif auth.startswith("@"):
                     self.validator = Htpasswd(auth)
-                elif ctx.options.proxyauth.startswith("ldap"):
-                    self.validator = Ldap(auth)
                 elif ":" in ctx.options.proxyauth:
                     self.validator = SingleUser(auth)
                 else:
@@ -209,83 +206,3 @@ class Htpasswd(Validator):
 
     def __call__(self, username: str, password: str) -> bool:
         return self.htpasswd.check_password(username, password)
-
-
-class Ldap(Validator):
-    conn: ldap3.Connection
-    server: ldap3.Server
-    dn_subtree: str
-    filter_key: str
-
-    def __init__(self, proxyauth: str):
-        (
-            use_ssl,
-            url,
-            port,
-            ldap_user,
-            ldap_pass,
-            self.dn_subtree,
-            self.filter_key,
-        ) = self.parse_spec(proxyauth)
-        server = ldap3.Server(url, port=port, use_ssl=use_ssl)
-        conn = ldap3.Connection(server, ldap_user, ldap_pass, auto_bind=True)
-        self.conn = conn
-        self.server = server
-
-    @staticmethod
-    def parse_spec(spec: str) -> tuple[bool, str, int | None, str, str, str, str]:
-        try:
-            if spec.count(":") > 4:
-                (
-                    security,
-                    url,
-                    port_str,
-                    ldap_user,
-                    ldap_pass,
-                    dn_subtree,
-                ) = spec.split(":")
-                port = int(port_str)
-            else:
-                security, url, ldap_user, ldap_pass, dn_subtree = spec.split(":")
-                port = None
-
-            if "?" in dn_subtree:
-                dn_subtree, search_str = dn_subtree.split("?")
-                key, value = search_str.split("=")
-                if key == "search_filter_key":
-                    search_filter_key = value
-                else:
-                    raise ValueError
-            else:
-                search_filter_key = "cn"
-
-            if security == "ldaps":
-                use_ssl = True
-            elif security == "ldap":
-                use_ssl = False
-            else:
-                raise ValueError
-
-            return (
-                use_ssl,
-                url,
-                port,
-                ldap_user,
-                ldap_pass,
-                dn_subtree,
-                search_filter_key,
-            )
-        except ValueError:
-            raise exceptions.OptionsError(f"Invalid LDAP specification: {spec}")
-
-    def __call__(self, username: str, password: str) -> bool:
-        if not username or not password:
-            return False
-        self.conn.search(self.dn_subtree, f"({self.filter_key}={username})")
-        if self.conn.response:
-            c = ldap3.Connection(
-                self.server, self.conn.response[0]["dn"], password, auto_bind=True
-            )
-            if c:
-                return True
-        return False

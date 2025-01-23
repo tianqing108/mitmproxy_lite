@@ -7,7 +7,6 @@ from mitmproxy.addons import clientplayback
 from mitmproxy.addons import command_history
 from mitmproxy.addons import comment
 from mitmproxy.addons import core
-from mitmproxy.addons import cut
 from mitmproxy.addons import disable_h2c
 from mitmproxy.addons import dns_resolver
 from mitmproxy.addons import export
@@ -16,7 +15,6 @@ from mitmproxy.addons import mapremote
 from mitmproxy.addons import modifybody
 from mitmproxy.addons import modifyheaders
 from mitmproxy.addons import next_layer
-from mitmproxy.addons import onboarding
 from mitmproxy.addons import proxyauth
 from mitmproxy.addons import proxyserver
 from mitmproxy.addons import save
@@ -43,10 +41,8 @@ def default_addons():
         clientplayback.ClientPlayback(),
         command_history.CommandHistory(),
         comment.Comment(),
-        cut.Cut(),
         disable_h2c.DisableH2C(),
         export.Export(),
-        onboarding.Onboarding(),
         proxyauth.ProxyAuth(),
         proxyserver.Proxyserver(),
         dns_resolver.DnsResolver(),
