@@ -7,7 +7,6 @@ import warnings
 from dataclasses import dataclass
 
 from mitmproxy import hooks
-from mitmproxy.contrib import click as miniclick
 from mitmproxy.utils import human
 
 if typing.TYPE_CHECKING:
@@ -39,9 +38,6 @@ class MitmFormatter(logging.Formatter):
         self.colorize = colorize
         time = "[%s]"
         client = "[%s]"
-        if colorize:
-            time = miniclick.style(time, fg="cyan", dim=True)
-            client = miniclick.style(client, fg="yellow", dim=True)
 
         self.with_client = f"{time}{client} %s"
         self.without_client = f"{time} %s"
@@ -54,12 +50,6 @@ class MitmFormatter(logging.Formatter):
         message = record.getMessage()
         if record.exc_info:
             message = f"{message}\n{self.formatException(record.exc_info)}"
-        if self.colorize:
-            message = miniclick.style(
-                message,
-                fg=LOG_COLORS.get(record.levelno),
-                # dim=(record.levelno <= logging.DEBUG)
-            )
         if client := getattr(record, "client", None):
             client = human.format_address(client)
             return self.with_client % (time, client, message)
