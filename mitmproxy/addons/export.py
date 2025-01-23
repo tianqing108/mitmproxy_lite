@@ -4,7 +4,6 @@ from collections.abc import Callable
 from collections.abc import Sequence
 from typing import Any
 
-import pyperclip
 
 import mitmproxy.types
 from mitmproxy import command
@@ -193,15 +192,6 @@ class Export:
         except OSError as e:
             logging.error(str(e))
 
-    @command.command("export.clip")
-    def clip(self, format: str, f: flow.Flow) -> None:
-        """
-        Export a flow to the system clipboard.
-        """
-        try:
-            pyperclip.copy(self.export_str(format, f))
-        except pyperclip.PyperclipException as e:
-            logging.error(str(e))
 
     @command.command("export")
     def export_str(self, format: str, f: flow.Flow) -> str:
