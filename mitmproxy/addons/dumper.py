@@ -16,7 +16,6 @@ from mitmproxy import exceptions
 from mitmproxy import flow
 from mitmproxy import flowfilter
 from mitmproxy import http
-from mitmproxy.contrib import click as miniclick
 from mitmproxy.net.dns import response_codes
 from mitmproxy.options import CONTENT_VIEW_LINES_CUTOFF
 from mitmproxy.tcp import TCPFlow
@@ -86,8 +85,6 @@ class Dumper:
                 self.filter = None
 
     def style(self, text: str, **style) -> str:
-        if style and self.out_has_vt_codes:
-            text = miniclick.style(text, **style)
         return text
 
     def echo(self, text: str, ident=None, **style):
