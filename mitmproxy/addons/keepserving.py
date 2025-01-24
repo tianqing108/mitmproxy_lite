@@ -38,8 +38,6 @@ class KeepServing:
 
     def running(self):
         opts = [
-            ctx.options.client_replay,
-            ctx.options.server_replay,
             ctx.options.rfile,
         ]
         if any(opts) and not ctx.options.keepserving:
