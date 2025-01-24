@@ -1,8 +1,6 @@
 from mitmproxy import addons
 from mitmproxy import master
 from mitmproxy import options
-from mitmproxy.addons import dumper
-from mitmproxy.addons import errorcheck
 from mitmproxy.addons import keepserving
 from mitmproxy.addons import readfile
 
@@ -17,10 +15,8 @@ class DumpMaster(master.Master):
     ) -> None:
         super().__init__(options, event_loop=loop, with_termlog=with_termlog)
         self.addons.add(*addons.default_addons())
-        if with_dumper:
-            self.addons.add(dumper.Dumper())
+
         self.addons.add(
             keepserving.KeepServing(),
             readfile.ReadFileStdin(),
-            errorcheck.ErrorCheck(),
         )
