@@ -6,7 +6,6 @@ from .addons import termlog
 from .proxy.mode_specs import ReverseMode
 from .utils import asyncio_utils
 from mitmproxy import addonmanager
-from mitmproxy import command
 from mitmproxy import eventsequence
 from mitmproxy import hooks
 from mitmproxy import http
@@ -31,7 +30,6 @@ class Master:
         with_termlog: bool = False,
     ):
         self.options: options.Options = opts or options.Options()
-        self.commands = command.CommandManager(self)
         self.addons = addonmanager.AddonManager(self)
 
         if with_termlog:
