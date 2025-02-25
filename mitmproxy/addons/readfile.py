@@ -5,7 +5,6 @@ import sys
 from typing import BinaryIO
 from typing import Optional
 
-from mitmproxy import command
 from mitmproxy import ctx
 from mitmproxy import exceptions
 from mitmproxy import flowfilter
@@ -80,10 +79,6 @@ class ReadFile:
                 name="readfile",
                 keep_ref=False,
             )
-
-    @command.command("readfile.reading")
-    def reading(self) -> bool:
-        return bool(self._read_task and not self._read_task.done())
 
 
 class ReadFileStdin(ReadFile):
