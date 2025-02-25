@@ -3,7 +3,6 @@ import shutil
 import subprocess
 import tempfile
 
-from mitmproxy import command
 from mitmproxy import ctx
 from mitmproxy.log import ALERT
 
@@ -36,7 +35,7 @@ class Browser:
     browser: list[subprocess.Popen] = []
     tdir: list[tempfile.TemporaryDirectory] = []
 
-    @command.command("browser.start")
+    # @command.command("browser.start")
     def start(self, browser: str = "chrome") -> None:
         if len(self.browser) > 0:
             logging.log(ALERT, "Starting additional browser")
