@@ -3,7 +3,6 @@ import collections
 import logging
 from collections.abc import Callable
 
-from mitmproxy import command
 from mitmproxy import log
 from mitmproxy.log import LogEntry
 from mitmproxy.utils import signals
@@ -28,14 +27,6 @@ class EventStore:
     @property
     def size(self) -> int | None:
         return self.data.maxlen
-
-    @command.command("eventstore.clear")
-    def clear(self) -> None:
-        """
-        Clear the event log.
-        """
-        self.data.clear()
-        self.sig_refresh.send()
 
 
 class CallbackLogger(log.MitmLogHandler):

@@ -9,7 +9,6 @@ from collections.abc import Sequence
 
 import mitmproxy.types as mtypes
 from mitmproxy import addonmanager
-from mitmproxy import command
 from mitmproxy import ctx
 from mitmproxy import eventsequence
 from mitmproxy import exceptions
@@ -162,28 +161,6 @@ class ScriptLoader:
 
     def running(self):
         self.is_running = True
-
-    @command.command("script.run")
-    def script_run(self, flows: Sequence[flow.Flow], path: mtypes.Path) -> None:
-        """
-        Run a script on the specified flows. The script is configured with
-        the current options and all lifecycle events for each flow are
-        simulated. Note that the load event is not invoked.
-        """
-        if not os.path.isfile(path):
-            logger.error("No such script: %s" % path)
-            return
-        mod = load_script(path)
-        if mod:
-            with addonmanager.safecall():
-                ctx.master.addons.invoke_addon_sync(
-                    mod,
-                    hooks.ConfigureHook(ctx.options.keys()),
-                )
-                ctx.master.addons.invoke_addon_sync(mod, hooks.RunningHook())
-                for f in flows:
-                    for evt in eventsequence.iterate(f):
-                        ctx.master.addons.invoke_addon_sync(mod, evt)
 
     def configure(self, updated):
         if "scripts" in updated:

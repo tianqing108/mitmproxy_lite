@@ -2,7 +2,6 @@ import asyncio
 
 import mitmproxy.master
 import mitmproxy.options
-from mitmproxy import command
 from mitmproxy import eventsequence
 from mitmproxy import hooks
 from mitmproxy.addons import core
@@ -73,5 +72,3 @@ class context:
         """
         Invoke a command function with a list of string arguments within a command context, mimicking the actual command environment.
         """
-        cmd = command.Command(self.master.commands, "test.command", func)
-        return cmd.call(args)

@@ -15,7 +15,6 @@ from typing import Optional
 
 from wsproto.frame_protocol import Opcode
 
-from mitmproxy import command
 from mitmproxy import ctx
 from mitmproxy import exceptions
 from mitmproxy import http
@@ -320,44 +319,6 @@ class Proxyserver(ServerManager):
             keep_ref=True,
             client=event.flow.client_conn.peername,
         )
-
-    @command.command("inject.websocket")
-    def inject_websocket(
-        self, flow: Flow, to_client: bool, message: bytes, is_text: bool = True
-    ):
-        if not isinstance(flow, http.HTTPFlow) or not flow.websocket:
-            logger.warning("Cannot inject WebSocket messages into non-WebSocket flows.")
-
-        msg = websocket.WebSocketMessage(
-            Opcode.TEXT if is_text else Opcode.BINARY, not to_client, message
-        )
-        event = WebSocketMessageInjected(flow, msg)
-        try:
-            self.inject_event(event)
-        except ValueError as e:
-            logger.warning(str(e))
-
-    @command.command("inject.tcp")
-    def inject_tcp(self, flow: Flow, to_client: bool, message: bytes):
-        if not isinstance(flow, tcp.TCPFlow):
-            logger.warning("Cannot inject TCP messages into non-TCP flows.")
-
-        event = TcpMessageInjected(flow, tcp.TCPMessage(not to_client, message))
-        try:
-            self.inject_event(event)
-        except ValueError as e:
-            logger.warning(str(e))
-
-    @command.command("inject.udp")
-    def inject_udp(self, flow: Flow, to_client: bool, message: bytes):
-        if not isinstance(flow, udp.UDPFlow):
-            logger.warning("Cannot inject UDP messages into non-UDP flows.")
-
-        event = UdpMessageInjected(flow, udp.UDPMessage(not to_client, message))
-        try:
-            self.inject_event(event)
-        except ValueError as e:
-            logger.warning(str(e))
 
     def server_connect(self, data: server_hooks.ServerConnectionHookData):
         if data.server.sockname is None:
