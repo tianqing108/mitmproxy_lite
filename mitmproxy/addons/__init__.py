@@ -3,7 +3,6 @@ from mitmproxy.addons import anticomp
 from mitmproxy.addons import block
 from mitmproxy.addons import blocklist
 from mitmproxy.addons import browser
-from mitmproxy.addons import core
 from mitmproxy.addons import disable_h2c
 from mitmproxy.addons import dns_resolver
 from mitmproxy.addons import next_layer
@@ -19,7 +18,6 @@ from mitmproxy.addons import upstream_auth
 
 def default_addons():
     return [
-        core.Core(),
         browser.Browser(),
         block.Block(),
         strip_dns_https_records.StripDnsHttpsRecords(),
